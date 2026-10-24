@@ -1,0 +1,3222 @@
+<!doctype html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="utf-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="description" content="PricePakad demo shopping deals and price history dashboard.">
+
+<title>PricePakad — Har deal pe nazar.</title>
+
+
+
+<style>
+
+:root {
+
+  --bg:#171412;
+
+  --panel:#25201d;
+
+  --panel2:#302824;
+
+  --text:#fff8f2;
+
+  --muted:#b8aaa0;
+
+  --line:#453831;
+
+  --accent:#f06a13;
+
+  --accent2:#ffb52e;
+
+  --green:#49d49a;
+
+  --red:#ff6b67;
+
+  --shadow:0 14px 34px #0003;
+
+}
+
+
+
+* { box-sizing:border-box; }
+
+
+
+html { scroll-behavior:smooth; }
+
+
+
+body {
+
+  margin:0;
+
+  background:var(--bg);
+
+  color:var(--text);
+
+  font:14px/1.5 Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+
+}
+
+
+
+button,input,select { font:inherit; }
+
+button { cursor:pointer; }
+
+
+
+button:focus-visible,
+
+input:focus-visible,
+
+select:focus-visible {
+
+  outline:2px solid var(--accent2);
+
+  outline-offset:2px;
+
+}
+
+
+
+a { color:inherit; text-decoration:none; }
+
+
+
+.wrap {
+
+  max-width:1220px;
+
+  margin:auto;
+
+  padding:0 20px;
+
+}
+
+
+
+.promo {
+
+  background:linear-gradient(90deg,#b94306,#f06a13,#c64c06);
+
+  color:white;
+
+  text-align:center;
+
+  padding:7px 12px;
+
+  font-size:11px;
+
+  font-weight:800;
+
+  letter-spacing:.2px;
+
+}
+
+
+
+header {
+
+  position:sticky;
+
+  top:0;
+
+  z-index:20;
+
+  background:#1d1917ed;
+
+  backdrop-filter:blur(14px);
+
+  border-bottom:1px solid var(--line);
+
+}
+
+
+
+.nav {
+
+  min-height:68px;
+
+  display:flex;
+
+  align-items:center;
+
+  gap:13px;
+
+}
+
+
+
+.brand {
+
+  font-size:22px;
+
+  font-weight:950;
+
+  letter-spacing:-1px;
+
+  white-space:nowrap;
+
+}
+
+
+
+.brand span { color:var(--accent2); }
+
+
+
+.search {
+
+  display:flex;
+
+  flex:1;
+
+  min-width:120px;
+
+  height:40px;
+
+}
+
+
+
+.search input {
+
+  min-width:0;
+
+  flex:1;
+
+  background:var(--panel);
+
+  border:1px solid var(--line);
+
+  border-radius:10px 0 0 10px;
+
+  padding:0 13px;
+
+  color:var(--text);
+
+}
+
+
+
+.search button,
+
+.btn-primary {
+
+  background:var(--accent);
+
+  color:#fff;
+
+  border:0;
+
+  font-weight:850;
+
+}
+
+
+
+.search button {
+
+  padding:0 16px;
+
+  border-radius:0 10px 10px 0;
+
+}
+
+
+
+.navbtn {
+
+  position:relative;
+
+  border:1px solid var(--line);
+
+  background:var(--panel);
+
+  color:var(--text);
+
+  border-radius:10px;
+
+  padding:10px 12px;
+
+  font-size:12px;
+
+  font-weight:800;
+
+  white-space:nowrap;
+
+}
+
+
+
+.count {
+
+  display:inline-grid;
+
+  place-items:center;
+
+  margin-left:5px;
+
+  min-width:18px;
+
+  height:18px;
+
+  border-radius:99px;
+
+  background:var(--accent);
+
+  font-size:10px;
+
+}
+
+
+
+.hero { padding:36px 0 22px; }
+
+
+
+.hero-grid {
+
+  display:grid;
+
+  grid-template-columns:1.3fr .7fr;
+
+  gap:22px;
+
+  align-items:center;
+
+  background:
+
+    radial-gradient(circle at 80% 10%,#62300f 0,transparent 35%),
+
+    linear-gradient(135deg,var(--panel),#211b17);
+
+  border:1px solid var(--line);
+
+  border-radius:22px;
+
+  padding:32px;
+
+  box-shadow:var(--shadow);
+
+}
+
+
+
+.eyebrow {
+
+  display:inline-flex;
+
+  align-items:center;
+
+  gap:8px;
+
+  background:#f06a1320;
+
+  border:1px solid #f06a1360;
+
+  color:var(--accent2);
+
+  border-radius:99px;
+
+  padding:7px 11px;
+
+  font-size:11px;
+
+  font-weight:900;
+
+}
+
+
+
+h1 {
+
+  font-size:clamp(32px,4vw,52px);
+
+  line-height:1.02;
+
+  letter-spacing:-2px;
+
+  margin:16px 0 12px;
+
+  max-width:680px;
+
+}
+
+
+
+.hero p {
+
+  color:var(--muted);
+
+  max-width:650px;
+
+  line-height:1.7;
+
+}
+
+
+
+.actions {
+
+  display:flex;
+
+  gap:10px;
+
+  flex-wrap:wrap;
+
+  margin-top:20px;
+
+}
+
+
+
+.btn {
+
+  border-radius:10px;
+
+  padding:12px 15px;
+
+  font-size:12px;
+
+  font-weight:900;
+
+  border:1px solid var(--line);
+
+}
+
+
+
+.btn-light {
+
+  background:transparent;
+
+  color:var(--text);
+
+}
+
+
+
+.hero-card {
+
+  background:#181411b8;
+
+  border:1px solid #6a4a34;
+
+  border-radius:16px;
+
+  padding:22px;
+
+}
+
+
+
+.hero-card small { color:var(--muted); }
+
+
+
+.big {
+
+  font-size:40px;
+
+  font-weight:950;
+
+  color:var(--accent2);
+
+  letter-spacing:-2px;
+
+}
+
+
+
+.metric {
+
+  display:flex;
+
+  justify-content:space-between;
+
+  border-top:1px solid var(--line);
+
+  padding:11px 0;
+
+  margin-top:8px;
+
+  font-size:12px;
+
+}
+
+
+
+.metric strong { color:var(--green); }
+
+
+
+.stats {
+
+  display:grid;
+
+  grid-template-columns:repeat(4,1fr);
+
+  gap:12px;
+
+  margin:18px 0;
+
+}
+
+
+
+.stat,.panel {
+
+  background:var(--panel);
+
+  border:1px solid var(--line);
+
+  border-radius:14px;
+
+  padding:16px;
+
+}
+
+
+
+.stat strong {
+
+  display:block;
+
+  color:var(--accent2);
+
+  font-size:23px;
+
+}
+
+
+
+.stat span {
+
+  color:var(--muted);
+
+  font-size:11px;
+
+}
+
+
+
+.section { padding:20px 0; }
+
+
+
+.section-head {
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:end;
+
+  gap:14px;
+
+  margin-bottom:15px;
+
+}
+
+
+
+.section-head h2 {
+
+  font-size:23px;
+
+  letter-spacing:-.7px;
+
+  margin:0;
+
+}
+
+
+
+.section-head p {
+
+  color:var(--muted);
+
+  font-size:12px;
+
+  margin:4px 0 0;
+
+}
+
+
+
+.right-controls {
+
+  display:flex;
+
+  gap:8px;
+
+  flex-wrap:wrap;
+
+}
+
+
+
+.select {
+
+  background:var(--panel);
+
+  color:var(--text);
+
+  border:1px solid var(--line);
+
+  padding:9px 10px;
+
+  border-radius:9px;
+
+  font-size:11px;
+
+}
+
+
+
+.filters {
+
+  display:flex;
+
+  gap:8px;
+
+  flex-wrap:wrap;
+
+  margin-bottom:15px;
+
+}
+
+
+
+.chip {
+
+  border:1px solid var(--line);
+
+  background:var(--panel);
+
+  color:var(--text);
+
+  padding:8px 12px;
+
+  border-radius:99px;
+
+  font-size:11px;
+
+  font-weight:850;
+
+}
+
+
+
+.chip.active {
+
+  background:var(--accent);
+
+  border-color:var(--accent);
+
+  color:white;
+
+}
+
+
+
+.grid {
+
+  display:grid;
+
+  grid-template-columns:repeat(4,minmax(0,1fr));
+
+  gap:14px;
+
+}
+
+
+
+.card {
+
+  min-width:0;
+
+  background:var(--panel);
+
+  border:1px solid var(--line);
+
+  border-radius:15px;
+
+  overflow:hidden;
+
+  transition:transform .18s,box-shadow .18s;
+
+}
+
+
+
+.card:hover {
+
+  transform:translateY(-3px);
+
+  box-shadow:var(--shadow);
+
+}
+
+
+
+.pic {
+
+  height:145px;
+
+  display:grid;
+
+  place-items:center;
+
+  background:radial-gradient(ellipse at 50% 45%,#6b4c28,#32271e 68%);
+
+  font-size:56px;
+
+  position:relative;
+
+}
+
+
+
+.market {
+
+  position:absolute;
+
+  top:10px;
+
+  left:10px;
+
+  background:#171412d9;
+
+  color:#fff;
+
+  padding:5px 8px;
+
+  border-radius:7px;
+
+  font-size:9px;
+
+  font-weight:900;
+
+}
+
+
+
+.drop {
+
+  position:absolute;
+
+  top:10px;
+
+  right:10px;
+
+  background:#123d2b;
+
+  color:#8cf2bd;
+
+  padding:5px 8px;
+
+  border-radius:7px;
+
+  font-size:10px;
+
+  font-weight:900;
+
+}
+
+
+
+.body { padding:13px; }
+
+
+
+.title-row {
+
+  display:flex;
+
+  gap:8px;
+
+  justify-content:space-between;
+
+  align-items:start;
+
+}
+
+
+
+.title {
+
+  font-size:13px;
+
+  font-weight:850;
+
+  line-height:1.35;
+
+  min-height:36px;
+
+}
+
+
+
+.heart {
+
+  background:none;
+
+  border:0;
+
+  color:var(--muted);
+
+  font-size:21px;
+
+  padding:0;
+
+  line-height:1;
+
+}
+
+
+
+.heart.fav { color:#ff6670; }
+
+
+
+.muted {
+
+  color:var(--muted);
+
+  font-size:11px;
+
+}
+
+
+
+.prices {
+
+  display:flex;
+
+  align-items:baseline;
+
+  gap:7px;
+
+  flex-wrap:wrap;
+
+  margin:10px 0 4px;
+
+}
+
+
+
+.now {
+
+  font-size:20px;
+
+  font-weight:950;
+
+  color:var(--accent2);
+
+}
+
+
+
+.old {
+
+  text-decoration:line-through;
+
+  color:var(--muted);
+
+  font-size:11px;
+
+}
+
+
+
+.low {
+
+  font-size:10px;
+
+  color:var(--green);
+
+  font-weight:800;
+
+}
+
+
+
+.score {
+
+  display:flex;
+
+  justify-content:space-between;
+
+  align-items:center;
+
+  background:var(--panel2);
+
+  padding:8px;
+
+  border-radius:8px;
+
+  margin-top:10px;
+
+}
+
+
+
+.score b { font-size:12px; }
+
+
+
+.score span {
+
+  font-size:9px;
+
+  color:var(--muted);
+
+}
+
+
+
+.card-actions {
+
+  display:flex;
+
+  gap:7px;
+
+  margin-top:10px;
+
+}
+
+
+
+.card-actions button,
+.card-actions a {
+
+  flex:1;
+
+  border-radius:8px;
+
+  padding:9px 5px;
+
+  font-size:10px;
+
+  font-weight:900;
+
+  border:1px solid var(--line);
+
+  background:transparent;
+
+  color:var(--text);
+
+}
+
+
+
+.card-actions .buy {
+
+  background:var(--accent);
+
+  border-color:var(--accent);
+
+  color:#fff;
+
+}
+
+
+
+.empty {
+
+  grid-column:1/-1;
+
+  text-align:center;
+
+  padding:35px;
+
+  color:var(--muted);
+
+  background:var(--panel);
+
+  border-radius:12px;
+
+}
+
+
+
+.notice {
+
+  background:#3a2916;
+
+  border:1px solid #81501d;
+
+  color:#ffd9a5;
+
+  border-radius:10px;
+
+  padding:11px 13px;
+
+  font-size:11px;
+
+  line-height:1.55;
+
+  margin-bottom:14px;
+
+}
+
+
+
+.lower {
+
+  display:grid;
+
+  grid-template-columns:1fr 1fr;
+
+  gap:14px;
+
+}
+
+
+
+.steps {
+
+  display:grid;
+
+  grid-template-columns:repeat(2,1fr);
+
+  gap:12px;
+
+}
+
+
+
+.step {
+
+  border:1px solid var(--line);
+
+  border-radius:11px;
+
+  padding:13px;
+
+}
+
+
+
+.step b {
+
+  color:var(--accent2);
+
+  font-size:12px;
+
+}
+
+
+
+.step p {
+
+  font-size:11px;
+
+  color:var(--muted);
+
+  margin:5px 0 0;
+
+}
+
+
+
+.alert-form {
+
+  display:flex;
+
+  gap:8px;
+
+  flex-wrap:wrap;
+
+}
+
+
+
+.alert-form input {
+
+  min-width:0;
+
+  flex:1;
+
+  background:var(--bg);
+
+  border:1px solid var(--line);
+
+  border-radius:9px;
+
+  padding:11px;
+
+  color:var(--text);
+
+}
+
+
+
+.alert-form button {
+
+  border:0;
+
+  border-radius:9px;
+
+  padding:11px 14px;
+
+  background:var(--accent);
+
+  color:#fff;
+
+  font-weight:900;
+
+  font-size:11px;
+
+}
+
+
+
+.form-msg {
+
+  min-height:18px;
+
+  margin-top:8px;
+
+  color:var(--green);
+
+  font-size:11px;
+
+}
+
+
+
+.settings-panel {
+
+  display:none;
+
+  margin:0 0 14px;
+
+}
+
+
+
+.settings-panel.open { display:block; }
+
+
+
+.settings-row {
+
+  display:flex;
+
+  gap:14px;
+
+  align-items:center;
+
+  flex-wrap:wrap;
+
+}
+
+
+
+.settings-row label {
+
+  font-size:11px;
+
+  color:var(--muted);
+
+}
+
+
+
+.settings-row input[type=color] {
+
+  width:40px;
+
+  height:30px;
+
+  border:0;
+
+  background:none;
+
+  padding:0;
+
+}
+
+
+
+.modal {
+
+  position:fixed;
+
+  inset:0;
+
+  display:none;
+
+  align-items:center;
+
+  justify-content:center;
+
+  background:#0009;
+
+  padding:18px;
+
+  z-index:50;
+
+}
+
+
+
+.modal.show { display:flex; }
+
+
+
+.modalbox {
+
+  width:100%;
+
+  max-width:720px;
+
+  max-height:90vh;
+
+  overflow:auto;
+
+  background:var(--panel);
+
+  border:1px solid var(--line);
+
+  border-radius:18px;
+
+  padding:22px;
+
+  box-shadow:var(--shadow);
+
+}
+
+
+
+.modalhead {
+
+  display:flex;
+
+  justify-content:space-between;
+
+  gap:12px;
+
+  align-items:start;
+
+}
+
+
+
+.modalhead h2 {
+
+  margin:0;
+
+  font-size:20px;
+
+}
+
+
+
+.close {
+
+  background:var(--panel2);
+
+  color:var(--text);
+
+  border:1px solid var(--line);
+
+  border-radius:8px;
+
+  padding:7px 10px;
+
+}
+
+
+
+.chart {
+
+  height:220px;
+
+  display:flex;
+
+  align-items:flex-end;
+
+  gap:8px;
+
+  padding:18px 10px 28px;
+
+  border:1px solid var(--line);
+
+  border-radius:12px;
+
+  background:var(--bg);
+
+  margin-top:14px;
+
+}
+
+
+
+.bar {
+
+  position:relative;
+
+  flex:1;
+
+  min-width:10px;
+
+  background:linear-gradient(180deg,var(--accent2),var(--accent));
+
+  border-radius:5px 5px 0 0;
+
+}
+
+
+
+.bar span {
+
+  position:absolute;
+
+  bottom:-22px;
+
+  left:50%;
+
+  transform:translateX(-50%);
+
+  font-size:9px;
+
+  color:var(--muted);
+
+}
+
+
+
+.history-controls {
+
+  display:flex;
+
+  gap:7px;
+
+  margin-top:14px;
+
+}
+
+
+
+.history-controls button {
+
+  background:var(--panel2);
+
+  color:var(--text);
+
+  border:1px solid var(--line);
+
+  border-radius:8px;
+
+  padding:8px 12px;
+
+  font-size:11px;
+
+  font-weight:800;
+
+}
+
+
+
+.history-controls button.active {
+
+  background:var(--accent);
+
+  border-color:var(--accent);
+
+}
+
+
+
+.history-summary {
+
+  display:grid;
+
+  grid-template-columns:repeat(3,1fr);
+
+  gap:9px;
+
+  margin-top:14px;
+
+}
+
+
+
+.history-summary div {
+
+  background:var(--panel2);
+
+  padding:10px;
+
+  border-radius:9px;
+
+}
+
+
+
+.history-summary small {
+
+  display:block;
+
+  color:var(--muted);
+
+  font-size:10px;
+
+}
+
+
+
+.history-summary b { font-size:15px; }
+
+
+
+.toast {
+
+  position:fixed;
+
+  bottom:18px;
+
+  left:50%;
+
+  transform:translate(-50%,15px);
+
+  opacity:0;
+
+  pointer-events:none;
+
+  background:var(--accent);
+
+  color:white;
+
+  border-radius:10px;
+
+  padding:11px 16px;
+
+  font-size:12px;
+
+  font-weight:800;
+
+  transition:.2s;
+
+  z-index:60;
+
+  box-shadow:var(--shadow);
+
+  max-width:90vw;
+
+  text-align:center;
+
+}
+
+
+
+.toast.show {
+
+  opacity:1;
+
+  transform:translate(-50%,0);
+
+}
+
+
+
+footer {
+
+  border-top:1px solid var(--line);
+
+  margin-top:25px;
+
+  padding:22px 0;
+
+  color:var(--muted);
+
+  font-size:11px;
+
+}
+
+
+
+footer b { color:var(--text); }
+
+
+
+body.light {
+
+  --bg:#f5f1ed;
+
+  --panel:#fff;
+
+  --panel2:#f1e8e1;
+
+  --text:#2b211c;
+
+  --muted:#76675e;
+
+  --line:#e2d6cc;
+
+  --shadow:0 14px 34px #5d3b1c12;
+
+}
+
+
+
+body.light header { background:#ffffffeb; }
+
+
+
+body.light .hero-grid {
+
+  background:
+
+    radial-gradient(circle at 80% 10%,#ffe1bd 0,transparent 35%),
+
+    linear-gradient(135deg,#fff,#f6e9dc);
+
+}
+
+
+
+body.light .hero-card { background:#fff9; }
+
+
+
+@media(max-width:920px) {
+
+  .grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+
+  .hero-grid { grid-template-columns:1fr; }
+
+  .hero-card {
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:8px;
+
+  }
+
+  .hero-card small,
+
+  .hero-card .big,
+
+  .hero-card>p { grid-column:1/-1; }
+
+  .metric { margin:0; }
+
+  .navbtn .label { display:none; }
+
+  .lower { grid-template-columns:1fr; }
+
+}
+
+
+
+@media(max-width:560px) {
+
+  .wrap { padding:0 12px; }
+
+  .nav { gap:6px; min-height:60px; }
+
+  .brand { font-size:18px; }
+
+  .search { height:35px; }
+
+  .search input { padding:0 8px; font-size:11px; }
+
+  .search button { padding:0 10px; font-size:11px; }
+
+  .navbtn { padding:8px; }
+
+  .hero-grid { padding:22px 16px; }
+
+  .hero { padding-top:18px; }
+
+  h1 { font-size:35px; }
+
+  .stats { grid-template-columns:repeat(2,1fr); gap:8px; }
+
+  .stat { padding:12px; }
+
+  .stat strong { font-size:20px; }
+
+  .section-head {
+
+    align-items:start;
+
+    flex-direction:column;
+
+  }
+
+  .grid { gap:9px; }
+
+  .pic { height:105px; font-size:44px; }
+
+  .body { padding:10px; }
+
+  .title { font-size:12px; }
+
+  .now { font-size:17px; }
+
+  .card-actions { flex-direction:column; }
+
+  .steps { grid-template-columns:1fr; }
+
+  .history-summary { grid-template-columns:1fr; }
+
+  .chart { gap:4px; padding-left:5px; padding-right:5px; }
+
+}
+
+</style>
+
+</head>
+
+
+
+<body>
+
+<div class="promo">
+
+  ⚡ PRICEPAKAD PREVIEW · Sample products only — live price feeds are not connected
+
+</div>
+
+
+
+<header>
+
+  <div class="wrap nav">
+
+    <a class="brand" href="#top">Price<span>Pakad</span></a>
+
+
+
+    <form class="search" id="searchForm">
+
+      <input id="searchInput" type="search"
+
+        placeholder="Search product, brand or category…"
+
+        aria-label="Search products">
+
+      <button type="submit">Search</button>
+
+    </form>
+
+
+
+    <button class="navbtn" id="favFilter">
+
+      ♥ <span class="label">Favorites</span>
+
+      <span class="count" id="favCount">0</span>
+
+    </button>
+
+
+
+    <button class="navbtn" id="cartBtn">
+
+      🛒 <span class="label">Cart</span>
+
+      <span class="count" id="cartCount">0</span>
+
+    </button>
+
+
+
+    <button class="navbtn" id="settingsBtn">
+
+      ⚙ <span class="label">Settings</span>
+
+    </button>
+
+  </div>
+
+</header>
+
+
+
+<main id="top" class="wrap">
+
+
+
+  <section class="hero">
+
+    <div class="hero-grid">
+
+      <div>
+
+        <span class="eyebrow">⚡ PRICE-DROP INTELLIGENCE · DEMO</span>
+
+
+
+        <h1>Find the deals that are actually worth buying.</h1>
+
+
+
+        <p>
+
+          Compare sample prices, inspect price history, save favorites
+
+          and build a demo cart. PricePakad is a front-end prototype;
+
+          prices and historical values are illustrative, not live offers.
+
+        </p>
+
+
+
+        <div class="actions">
+
+          <a class="btn btn-primary" href="#deals">🔥 Explore Top Deals</a>
+
+          <button class="btn btn-light" id="heroAlert">🔔 Create Price Alert</button>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="hero-card">
+
+        <small>Today's illustrative snapshot</small>
+
+        <div class="big">32.4% ↓</div>
+
+        <p class="muted">Average drop across the sample deals below</p>
+
+        <div class="metric"><span>Sample deals</span><strong>8</strong></div>
+
+        <div class="metric"><span>Price history</span><strong>7 / 30 / 90 days</strong></div>
+
+        <div class="metric"><span>Marketplaces</span><strong>Amazon + Flipkart*</strong></div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <section class="stats">
+
+    <div class="stat"><strong>32.4%</strong><span>Average sample drop</span></div>
+
+    <div class="stat"><strong>8</strong><span>Illustrative products</span></div>
+
+    <div class="stat"><strong>7–90d</strong><span>History chart ranges</span></div>
+
+    <div class="stat"><strong>INR / USD</strong><span>Currency display toggle</span></div>
+
+  </section>
+
+
+
+  <section class="section" id="deals">
+
+    <div class="section-head">
+
+      <div>
+
+        <h2>🚀 Today's Biggest Price Drops</h2>
+
+        <p>Search, filter, favorite products and open their sample price history.</p>
+
+      </div>
+
+
+
+      <div class="right-controls">
+
+        <select class="select" id="currency">
+
+          <option value="INR">Currency: INR ₹</option>
+
+          <option value="USD">Currency: USD $</option>
+
+        </select>
+
+
+
+        <select class="select" id="sort">
+
+          <option value="score">Sort: Deal score</option>
+
+          <option value="drop">Sort: Biggest drop</option>
+
+          <option value="priceLow">Sort: Price low to high</option>
+
+          <option value="priceHigh">Sort: Price high to low</option>
+
+        </select>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="notice">
+
+      <b>Demo notice:</b> Product prices, discounts and chart points are
+
+      sample data for UI demonstration. They are not verified current prices.
+
+      Real price alerts, affiliate checkout and live Amazon/Flipkart data
+
+      require approved data sources and a backend.
+
+    </div>
+
+
+
+    <div class="filters" id="filters">
+
+      <button class="chip active" data-filter="all">All Deals</button>
+
+      <button class="chip" data-filter="amazon">Amazon</button>
+
+      <button class="chip" data-filter="flipkart">Flipkart</button>
+
+      <button class="chip" data-filter="electronics">Electronics</button>
+
+      <button class="chip" data-filter="home">Home & Kitchen</button>
+
+      <button class="chip" data-filter="30">30%+ Drop</button>
+
+      <button class="chip" data-filter="low">New Low</button>
+
+    </div>
+
+
+
+    <div class="grid" id="productGrid"></div>
+
+  </section>
+
+
+
+  <section class="section settings-panel panel" id="settingsPanel">
+
+    <div class="section-head">
+
+      <div>
+
+        <h2>⚙ Display Settings</h2>
+
+        <p>Customize the page appearance. Settings apply in this browser tab.</p>
+
+      </div>
+
+      <button class="btn btn-light" id="closeSettings">Close</button>
+
+    </div>
+
+
+
+    <div class="settings-row">
+
+      <label><input type="checkbox" id="lightToggle"> Light theme</label>
+
+
+
+      <label>
+
+        Accent color
+
+        <input type="color" id="accentColor" value="#f06a13">
+
+      </label>
+
+
+
+      <label>
+
+        Currency
+
+        <select class="select" id="settingsCurrency">
+
+          <option value="INR">INR ₹</option>
+
+          <option value="USD">USD $</option>
+
+        </select>
+
+      </label>
+
+
+
+      <button class="btn btn-light" id="resetSettings">Reset settings</button>
+
+    </div>
+
+  </section>
+
+
+
+  <section class="section lower">
+
+    <div class="panel">
+
+      <div class="section-head">
+
+        <div>
+
+          <h2>💡 How PricePakad works</h2>
+
+          <p>Designed around transparent price intelligence.</p>
+
+        </div>
+
+      </div>
+
+
+
+      <div class="steps">
+
+        <div class="step">
+
+          <b>01 — TRACK</b>
+
+          <p>Collect price snapshots from approved data sources.</p>
+
+        </div>
+
+        <div class="step">
+
+          <b>02 — COMPARE</b>
+
+          <p>Compare current price with historical averages and lows.</p>
+
+        </div>
+
+        <div class="step">
+
+          <b>03 — SCORE</b>
+
+          <p>Rank sample deals by drop size and historical position.</p>
+
+        </div>
+
+        <div class="step">
+
+          <b>04 — ALERT</b>
+
+          <p>Set a target and connect a backend to deliver real notifications.</p>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+
+    <div class="panel" id="alerts">
+
+      <div class="section-head">
+
+        <div>
+
+          <h2>🔔 Price Alerts</h2>
+
+          <p>Save a demo alert target for a product.</p>
+
+        </div>
+
+      </div>
+
+
+
+      <form class="alert-form" id="alertForm">
+
+        <input id="alertEmail" type="email"
+
+          placeholder="Your email address" required>
+
+
+
+        <select class="select" id="alertProduct"
+
+          aria-label="Product for price alert"></select>
+
+
+
+        <input id="alertTarget" type="number" min="1"
+
+          placeholder="Target price" required style="max-width:135px">
+
+
+
+        <button type="submit">Set Alert</button>
+
+      </form>
+
+
+
+      <div class="form-msg" id="formMsg" aria-live="polite"></div>
+
+
+
+      <p class="muted">
+
+        This demo validates the form locally only. It does not send email
+
+        or store alerts on a server.
+
+      </p>
+
+    </div>
+
+  </section>
+
+</main>
+
+
+
+<footer>
+
+  <div class="wrap">
+
+    <b>PricePakad</b> — Find Better Prices. Shop Smarter.
+
+    *Amazon and Flipkart are referenced as marketplace examples only.
+
+    This standalone prototype uses sample products, prices and history;
+
+    no live marketplace data, real payments, login or email notifications
+
+    are connected. © 2026 PricePakad.
+
+  </div>
+
+</footer>
+
+
+
+<div class="modal" id="modal" role="dialog" aria-modal="true"
+
+  aria-labelledby="modalTitle">
+
+  <div class="modalbox">
+
+    <div class="modalhead">
+
+      <div>
+
+        <h2 id="modalTitle">Price History</h2>
+
+        <p id="modalMeta" class="muted"></p>
+
+      </div>
+
+      <button class="close" id="closeModal" aria-label="Close">✕</button>
+
+    </div>
+
+
+
+    <div class="history-controls">
+
+      <button data-days="7" class="active">7 days</button>
+
+      <button data-days="30">30 days</button>
+
+      <button data-days="90">90 days</button>
+
+    </div>
+
+
+
+    <div class="history-summary" id="historySummary"></div>
+
+    <div class="chart" id="chart"></div>
+
+
+
+    <p class="muted">
+
+      Illustrative historical values only. Chart bars are sample points
+
+      and do not represent verified market records.
+
+    </p>
+
+  </div>
+
+</div>
+
+
+
+<div class="modal" id="cartModal" role="dialog" aria-modal="true"
+
+  aria-labelledby="cartTitle">
+
+  <div class="modalbox">
+
+    <div class="modalhead">
+
+      <div>
+
+        <h2 id="cartTitle">🛒 Your Demo Cart</h2>
+
+        <p class="muted">No payment or order will be made.</p>
+
+      </div>
+
+      <button class="close" id="closeCart">✕</button>
+
+    </div>
+
+
+
+    <div id="cartContents"></div>
+
+
+
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:15px">
+
+      <b id="cartTotal"></b>
+
+      <button class="btn btn-primary" id="clearCart">Clear cart</button>
+
+    </div>
+
+  </div>
+
+</div>
+
+
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+
+
+<script>
+
+const deals = [
+
+  {
+
+    id:1,
+
+    name:'JBL Wave Buds 2',
+
+    category:'electronics',
+
+    market:'amazon',
+
+    emoji:'🎧',
+
+    price:2299,
+
+    old:2899,
+
+    low:2209,
+
+    drop:20.7,
+
+    score:94,
+
+    newlow:false,
+
+    hist:[2999,2899,2799,2699,2499,2399,2299]
+
+  },
+
+  {
+
+    id:2,
+
+    name:'43-inch 4K Smart TV',
+
+    category:'electronics',
+
+    market:'flipkart',
+
+    emoji:'📺',
+
+    price:27999,
+
+    old:34999,
+
+    low:27999,
+
+    drop:20,
+
+    score:91,
+
+    newlow:true,
+
+    hist:[35999,34999,33999,31999,30999,29999,27999]
+
+  },
+
+  {
+
+    id:3,
+
+    name:'Wireless Laptop 14-inch',
+
+    category:'electronics',
+
+    market:'amazon',
+
+    emoji:'💻',
+
+    price:51990,
+
+    old:62990,
+
+    low:49990,
+
+    drop:17.5,
+
+    score:88,
+
+    newlow:false,
+
+    hist:[62990,61990,59990,58990,56990,54990,51990]
+
+  },
+
+  {
+
+    id:4,
+
+    name:'Air Fryer 5L',
+
+    category:'home',
+
+    market:'flipkart',
+
+    emoji:'🍟',
+
+    price:3499,
+
+    old:4999,
+
+    low:3499,
+
+    drop:30,
+
+    score:96,
+
+    newlow:true,
+
+    hist:[4999,4799,4499,4299,3999,3799,3499]
+
+  },
+
+  {
+
+    id:5,
+
+    name:'Mechanical Keyboard',
+
+    category:'electronics',
+
+    market:'amazon',
+
+    emoji:'⌨️',
+
+    price:2499,
+
+    old:3299,
+
+    low:2399,
+
+    drop:24.3,
+
+    score:90,
+
+    newlow:false,
+
+    hist:[3299,3199,2999,2899,2799,2599,2499]
+
+  },
+
+  {
+
+    id:6,
+
+    name:'Mixer Grinder 750W',
+
+    category:'home',
+
+    market:'flipkart',
+
+    emoji:'🥤',
+
+    price:2899,
+
+    old:3999,
+
+    low:2799,
+
+    drop:27.5,
+
+    score:93,
+
+    newlow:false,
+
+    hist:[3999,3899,3699,3499,3299,3099,2899]
+
+  },
+
+  {
+
+    id:7,
+
+    name:'ANC Headphones',
+
+    category:'electronics',
+
+    market:'amazon',
+
+    emoji:'🎵',
+
+    price:3999,
+
+    old:5499,
+
+    low:3999,
+
+    drop:27.3,
+
+    score:95,
+
+    newlow:true,
+
+    hist:[5499,5299,4999,4799,4499,4199,3999]
+
+  },
+
+  {
+
+    id:8,
+
+    name:'Robot Vacuum',
+
+    category:'home',
+
+    market:'flipkart',
+
+    emoji:'🤖',
+
+    price:11999,
+
+    old:15999,
+
+    low:10999,
+
+    drop:25,
+
+    score:87,
+
+    newlow:false,
+
+    hist:[15999,15499,14999,13999,13499,12499,11999]
+
+  }
+
+];
+
+
+
+let filter = 'all';
+
+let query = '';
+
+let onlyFav = false;
+
+let currency = 'INR';
+
+let favorites = new Set();
+
+let cart = [];
+
+let activeProduct = null;
+
+let historyDays = 7;
+
+let toastTimer;
+
+
+
+const $ = id => document.getElementById(id);
+
+const grid = $('productGrid');
+
+
+
+function money(n) {
+
+  if (currency === 'USD') {
+
+    return new Intl.NumberFormat('en-US', {
+
+      style:'currency',
+
+      currency:'USD',
+
+      maximumFractionDigits:2
+
+    }).format(n / 83.5);
+
+  }
+
+
+
+  return '₹' + Math.round(n).toLocaleString('en-IN');
+
+}
+
+
+
+function toast(message) {
+
+  const el = $('toast');
+
+  el.textContent = message;
+
+  el.classList.add('show');
+
+
+
+  clearTimeout(toastTimer);
+
+
+
+  toastTimer = setTimeout(() => {
+
+    el.classList.remove('show');
+
+  }, 2300);
+
+}
+
+
+
+function listDeals() {
+
+  let list = deals.filter(d =>
+
+    (
+
+      filter === 'all' ||
+
+      (filter === 'amazon' && d.market === 'amazon') ||
+
+      (filter === 'flipkart' && d.market === 'flipkart') ||
+
+      (filter === 'electronics' && d.category === 'electronics') ||
+
+      (filter === 'home' && d.category === 'home') ||
+
+      (filter === '30' && d.drop >= 30) ||
+
+      (filter === 'low' && d.newlow)
+
+    ) &&
+
+    (!onlyFav || favorites.has(d.id)) &&
+
+    (d.name + ' ' + d.category + ' ' + d.market)
+
+      .toLowerCase()
+
+      .includes(query.toLowerCase())
+
+  );
+
+
+
+  const sort = $('sort').value;
+
+
+
+  list.sort((a,b) =>
+
+    sort === 'drop' ? b.drop - a.drop :
+
+    sort === 'priceLow' ? a.price - b.price :
+
+    sort === 'priceHigh' ? b.price - a.price :
+
+    b.score - a.score
+
+  );
+
+
+
+  return list;
+
+}
+
+
+
+function render() {
+
+  const list = listDeals();
+
+
+
+  grid.innerHTML = list.length
+
+    ? list.map(d => `
+
+      <article class="card">
+
+        <div class="pic">
+
+          <span class="market">
+
+            ${d.market === 'amazon' ? 'AMAZON' : 'FLIPKART'}
+
+          </span>
+
+          <span class="drop">−${d.drop}%</span>
+
+          ${d.emoji}
+
+        </div>
+
+
+
+        <div class="body">
+
+          <div class="title-row">
+
+            <div class="title">${d.name}</div>
+
+            <button class="heart ${favorites.has(d.id) ? 'fav' : ''}"
+
+              data-fav="${d.id}" aria-label="Toggle favorite">
+
+              ${favorites.has(d.id) ? '♥' : '♡'}
+
+            </button>
+
+          </div>
+
+
+
+          <div class="muted">
+
+            ${d.category === 'electronics' ? 'Electronics' : 'Home & Kitchen'}
+
+            · Demo product
+
+          </div>
+
+
+
+          <div class="prices">
+
+            <span class="now">${money(d.price)}</span>
+
+            <span class="old">${money(d.old)}</span>
+
+          </div>
+
+
+
+          <div class="low">
+
+            Recorded sample low: ${money(d.low)}
+
+            ${d.newlow ? '· NEW LOW' : ''}
+
+          </div>
+
+
+
+          <div class="score">
+
+            <b>⚡ ${d.score}/100</b>
+
+            <span>Demo deal score</span>
+
+          </div>
+
+
+
+          <div class="card-actions">
+
+            <button data-history="${d.id}">Price History</button>
+
+            <a class="buy" href="${d.market === 'flipkart' ? 'https://www.flipkart.com/search?q=' + encodeURIComponent(d.name) : 'https://www.amazon.in/s?k=' + encodeURIComponent(d.name)}" target="_blank" rel="noopener noreferrer" aria-label="Search ${d.name} on ${d.market === 'flipkart' ? 'Flipkart' : 'Amazon'}">Find on ${d.market === 'flipkart' ? 'Flipkart' : 'Amazon'}</a>
+
+          </div>
+
+        </div>
+
+      </article>
+
+    `).join('')
+
+    : '<div class="empty">No matching deals found. Change your search or filter.</div>';
+
+
+
+  $('favCount').textContent = favorites.size;
+
+  $('cartCount').textContent = cart.length;
+
+  $('favFilter').classList.toggle('active', onlyFav);
+
+
+
+  document.querySelectorAll('[data-filter]').forEach(button => {
+
+    button.classList.toggle('active', button.dataset.filter === filter);
+
+  });
+
+
+
+  $('alertProduct').innerHTML = deals.map(d =>
+
+    `<option value="${d.id}">${d.name}</option>`
+
+  ).join('');
+
+}
+
+
+
+function openHistory(id, days = 7) {
+
+  activeProduct = deals.find(d => d.id === id);
+
+  historyDays = days;
+
+
+
+  if (!activeProduct) return;
+
+
+
+  $('modalTitle').textContent = activeProduct.name + ' — Price History';
+
+
+
+  $('modalMeta').textContent =
+
+    (activeProduct.market === 'amazon' ? 'Amazon' : 'Flipkart') +
+
+    ' · sample price points · ' + days + ' days';
+
+
+
+  const count = days === 7 ? 7 : days === 30 ? 10 : 12;
+
+  const base = activeProduct.hist;
+
+  const values = [];
+
+
+
+  for (let i = 0; i < count; i++) {
+
+    const index = Math.round(i * (base.length - 1) / (count - 1));
+
+    let value = base[index];
+
+
+
+    if (days === 30 && i % 3 === 1) {
+
+      value = Math.round(value * 1.025);
+
+    }
+
+
+
+    if (days === 90 && i % 4 === 2) {
+
+      value = Math.round(value * 1.06);
+
+    }
+
+
+
+    values.push(value);
+
+  }
+
+
+
+  values[values.length - 1] = activeProduct.price;
+
+
+
+  const max = Math.max(...values);
+
+
+
+  $('chart').innerHTML = values.map((value, index) => `
+
+    <div class="bar"
+
+      title="${money(value)}"
+
+      style="height:${Math.max(12, Math.round(value / max * 145))}px">
+
+      <span>
+
+        ${
+
+          index === values.length - 1
+
+            ? 'Now'
+
+            : days === 7
+
+              ? ['−6d','−5d','−4d','−3d','−2d','−1d',''][index]
+
+              : index + 1
+
+        }
+
+      </span>
+
+    </div>
+
+  `).join('');
+
+
+
+  $('historySummary').innerHTML = `
+
+    <div>
+
+      <small>Current demo price</small>
+
+      <b>${money(activeProduct.price)}</b>
+
+    </div>
+
+    <div>
+
+      <small>Previous price</small>
+
+      <b>${money(activeProduct.old)}</b>
+
+    </div>
+
+    <div>
+
+      <small>Recorded sample low</small>
+
+      <b>${money(activeProduct.low)}</b>
+
+    </div>
+
+  `;
+
+
+
+  document.querySelectorAll('[data-days]').forEach(button => {
+
+    button.classList.toggle('active', +button.dataset.days === days);
+
+  });
+
+
+
+  $('modal').classList.add('show');
+
+}
+
+
+
+function showCart() {
+
+  const total = cart.reduce((sum, product) => sum + product.price, 0);
+
+
+
+  $('cartContents').innerHTML = cart.length
+
+    ? cart.map((product, index) => `
+
+      <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:10px 0">
+
+        <span>${product.emoji} ${product.name}</span>
+
+        <b>${money(product.price)}</b>
+
+        <button class="close" data-remove="${index}">Remove</button>
+
+      </div>
+
+    `).join('')
+
+    : '<p class="muted">Your demo cart is empty.</p>';
+
+
+
+  $('cartTotal').textContent = 'Total: ' + money(total);
+
+  $('cartModal').classList.add('show');
+
+}
+
+
+
+/* Search */
+
+$('searchForm').addEventListener('submit', event => {
+
+  event.preventDefault();
+
+
+
+  query = $('searchInput').value.trim();
+
+  onlyFav = false;
+
+
+
+  render();
+
+  $('deals').scrollIntoView({behavior:'smooth'});
+
+});
+
+
+
+$('searchInput').addEventListener('input', () => {
+
+  query = $('searchInput').value.trim();
+
+  render();
+
+});
+
+
+
+/* Category and deal filters */
+
+$('filters').addEventListener('click', event => {
+
+  const button = event.target.closest('[data-filter]');
+
+  if (!button) return;
+
+
+
+  filter = button.dataset.filter;
+
+  onlyFav = false;
+
+  render();
+
+});
+
+
+
+$('sort').addEventListener('change', render);
+
+
+
+/* Currency */
+
+$('currency').addEventListener('change', () => {
+
+  currency = $('currency').value;
+
+  $('settingsCurrency').value = currency;
+
+  render();
+
+});
+
+
+
+/* Product card actions */
+
+grid.addEventListener('click', event => {
+
+  const favoriteButton = event.target.closest('[data-fav]');
+
+  const addButton = event.target.closest('[data-add]');
+
+  const historyButton = event.target.closest('[data-history]');
+
+
+
+  if (favoriteButton) {
+
+    const id = +favoriteButton.dataset.fav;
+
+
+
+    if (favorites.has(id)) {
+
+      favorites.delete(id);
+
+    } else {
+
+      favorites.add(id);
+
+    }
+
+
+
+    render();
+
+
+
+    toast(
+
+      favorites.has(id)
+
+        ? 'Saved to Favorites ❤️'
+
+        : 'Removed from Favorites'
+
+    );
+
+  }
+
+
+
+  if (addButton) {
+
+    const product = deals.find(d => d.id === +addButton.dataset.add);
+
+
+
+    if (product) {
+
+      cart.push(product);
+
+      render();
+
+      toast(product.name + ' added to demo cart');
+
+    }
+
+  }
+
+
+
+  if (historyButton) {
+
+    openHistory(+historyButton.dataset.history);
+
+  }
+
+});
+
+
+
+/* Favorites */
+
+$('favFilter').addEventListener('click', () => {
+
+  onlyFav = !onlyFav;
+
+  render();
+
+  $('deals').scrollIntoView({behavior:'smooth'});
+
+});
+
+
+
+/* Cart actions */
+
+$('cartBtn').addEventListener('click', showCart);
+
+
+
+$('cartContents').addEventListener('click', event => {
+
+  const button = event.target.closest('[data-remove]');
+
+  if (!button) return;
+
+
+
+  cart.splice(+button.dataset.remove, 1);
+
+  showCart();
+
+  render();
+
+});
+
+
+
+$('closeCart').addEventListener('click', () => {
+
+  $('cartModal').classList.remove('show');
+
+});
+
+
+
+$('clearCart').addEventListener('click', () => {
+
+  cart = [];
+
+  showCart();
+
+  render();
+
+  toast('Demo cart cleared');
+
+});
+
+
+
+/* Price history modal */
+
+$('closeModal').addEventListener('click', () => {
+
+  $('modal').classList.remove('show');
+
+});
+
+
+
+$('modal').addEventListener('click', event => {
+
+  if (event.target === $('modal')) {
+
+    $('modal').classList.remove('show');
+
+  }
+
+});
+
+
+
+$('cartModal').addEventListener('click', event => {
+
+  if (event.target === $('cartModal')) {
+
+    $('cartModal').classList.remove('show');
+
+  }
+
+});
+
+
+
+document.querySelectorAll('[data-days]').forEach(button => {
+
+  button.addEventListener('click', () => {
+
+    if (activeProduct) {
+
+      openHistory(activeProduct.id, +button.dataset.days);
+
+    }
+
+  });
+
+});
+
+
+
+/* Display settings */
+
+$('settingsBtn').addEventListener('click', () => {
+
+  $('settingsPanel').classList.toggle('open');
+
+
+
+  $('settingsPanel').scrollIntoView({
+
+    behavior:'smooth',
+
+    block:'nearest'
+
+  });
+
+});
+
+
+
+$('closeSettings').addEventListener('click', () => {
+
+  $('settingsPanel').classList.remove('open');
+
+});
+
+
+
+$('heroAlert').addEventListener('click', () => {
+
+  $('alerts').scrollIntoView({behavior:'smooth'});
+
+});
+
+
+
+$('lightToggle').addEventListener('change', () => {
+
+  document.body.classList.toggle('light', $('lightToggle').checked);
+
+});
+
+
+
+$('accentColor').addEventListener('input', () => {
+
+  document.documentElement.style.setProperty(
+
+    '--accent',
+
+    $('accentColor').value
+
+  );
+
+});
+
+
+
+$('settingsCurrency').addEventListener('change', () => {
+
+  $('currency').value = $('settingsCurrency').value;
+
+  currency = $('settingsCurrency').value;
+
+  render();
+
+});
+
+
+
+$('resetSettings').addEventListener('click', () => {
+
+  document.body.classList.remove('light');
+
+  $('lightToggle').checked = false;
+
+
+
+  $('accentColor').value = '#f06a13';
+
+
+
+  document.documentElement.style.setProperty('--accent', '#f06a13');
+
+
+
+  currency = 'INR';
+
+  $('currency').value = 'INR';
+
+  $('settingsCurrency').value = 'INR';
+
+
+
+  render();
+
+  toast('Settings reset');
+
+});
+
+
+
+/* Demo price alert form */
+
+$('alertForm').addEventListener('submit', event => {
+
+  event.preventDefault();
+
+
+
+  const product = deals.find(
+
+    d => d.id === +$('alertProduct').value
+
+  );
+
+
+
+  const target = +$('alertTarget').value;
+
+
+
+  if (!event.target.checkValidity() || target <= 0) {
+
+    event.target.reportValidity();
+
+    return;
+
+  }
+
+
+
+  if (!product) {
+
+    toast('Please select a product');
+
+    return;
+
+  }
+
+
+
+  $('formMsg').textContent =
+
+    `✓ Demo alert prepared for ${product.name} at ${money(target)}. No email was sent.`;
+
+
+
+  toast('Demo price alert set');
+
+  event.target.reset();
+
+});
+
+
+
+/* Escape key closes open modals */
+
+document.addEventListener('keydown', event => {
+
+  if (event.key === 'Escape') {
+
+    $('modal').classList.remove('show');
+
+    $('cartModal').classList.remove('show');
+
+  }
+
+});
+
+
+
+/* Initial render */
+
+render();
+
+</script>
+
+</body>
+
+</html>
