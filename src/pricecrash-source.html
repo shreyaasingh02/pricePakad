@@ -2109,874 +2109,436 @@ body.light .hero-card { background:#fff9; }
 
 <script>
 
-const deals = [
-
-  {
-
-    id:1,
-
-    name:'JBL Wave Buds 2',
-
-    category:'electronics',
-
-    market:'amazon',
-
-    emoji:'🎧',
-
-    price:2299,
-
-    old:2899,
-
-    low:2209,
-
-    drop:20.7,
-
-    score:94,
-
-    newlow:false,
-
-    hist:[2999,2899,2799,2699,2499,2399,2299]
-
-  },
-
-  {
-
-    id:2,
-
-    name:'43-inch 4K Smart TV',
-
-    category:'electronics',
-
-    market:'flipkart',
-
-    emoji:'📺',
-
-    price:27999,
-
-    old:34999,
-
-    low:27999,
-
-    drop:20,
-
-    score:91,
-
-    newlow:true,
-
-    hist:[35999,34999,33999,31999,30999,29999,27999]
-
-  },
-
-  {
-
-    id:3,
-
-    name:'Wireless Laptop 14-inch',
-
-    category:'electronics',
-
-    market:'amazon',
-
-    emoji:'💻',
-
-    price:51990,
-
-    old:62990,
-
-    low:49990,
-
-    drop:17.5,
-
-    score:88,
-
-    newlow:false,
-
-    hist:[62990,61990,59990,58990,56990,54990,51990]
-
-  },
-
-  {
-
-    id:4,
-
-    name:'Air Fryer 5L',
-
-    category:'home',
-
-    market:'flipkart',
-
-    emoji:'🍟',
-
-    price:3499,
-
-    old:4999,
-
-    low:3499,
-
-    drop:30,
-
-    score:96,
-
-    newlow:true,
-
-    hist:[4999,4799,4499,4299,3999,3799,3499]
-
-  },
-
-  {
-
-    id:5,
-
-    name:'Mechanical Keyboard',
-
-    category:'electronics',
-
-    market:'amazon',
-
-    emoji:'⌨️',
-
-    price:2499,
-
-    old:3299,
-
-    low:2399,
-
-    drop:24.3,
-
-    score:90,
-
-    newlow:false,
-
-    hist:[3299,3199,2999,2899,2799,2599,2499]
-
-  },
-
-  {
-
-    id:6,
-
-    name:'Mixer Grinder 750W',
-
-    category:'home',
-
-    market:'flipkart',
-
-    emoji:'🥤',
-
-    price:2899,
-
-    old:3999,
-
-    low:2799,
-
-    drop:27.5,
-
-    score:93,
-
-    newlow:false,
-
-    hist:[3999,3899,3699,3499,3299,3099,2899]
-
-  },
-
-  {
-
-    id:7,
-
-    name:'ANC Headphones',
-
-    category:'electronics',
-
-    market:'amazon',
-
-    emoji:'🎵',
-
-    price:3999,
-
-    old:5499,
-
-    low:3999,
-
-    drop:27.3,
-
-    score:95,
-
-    newlow:true,
-
-    hist:[5499,5299,4999,4799,4499,4199,3999]
-
-  },
-
-  {
-
-    id:8,
-
-    name:'Robot Vacuum',
-
-    category:'home',
-
-    market:'flipkart',
-
-    emoji:'🤖',
-
-    price:11999,
-
-    old:15999,
-
-    low:10999,
-
-    drop:25,
-
-    score:87,
-
-    newlow:false,
-
-    hist:[15999,15499,14999,13999,13499,12499,11999]
-
+let deals = [];
+
+function mapApiProduct(product) {
+  const history = (product.priceHistory || [])
+    .map(entry => ({
+      price: Number(entry.price),
+      date: entry.recordedAt ? new Date(entry.recordedAt) : null
+    }))
+    .filter(entry => Number.isFinite(entry.price))
+    .sort((a, b) => (a.date?.getTime() || 0) - (b.date?.getTime() || 0));
+
+  const currentPrice = Number(product.currentPrice);
+  const originalPrice = product.originalPrice == null
+    ? currentPrice
+    : Number(product.originalPrice);
+
+  const lowestPrice = history.length
+    ? Math.min(...history.map(entry => entry.price))
+    : currentPrice;
+
+  const drop = originalPrice > 0
+    ? Math.max(0, ((originalPrice - currentPrice) / originalPrice) * 100)
+    : 0;
+
+  return {
+    id: String(product._id),
+    name: product.name || 'Unnamed product',
+    category: product.category || 'other',
+    market: String(product.retailer || 'other').toLowerCase(),
+    emoji: '🛍️',
+    price: currentPrice,
+    old: originalPrice,
+    low: lowestPrice,
+    drop,
+    score: null,
+    newlow: history.length > 0 && currentPrice <= lowestPrice,
+    hist: history.map(entry => entry.price),
+    history,
+    productUrl: product.productUrl || '#',
+    imageUrl: product.imageUrl || ''
+  };
+}
+
+async function loadDeals() {
+  try {
+    const response = await fetch('http://localhost:5000/api/products');
+
+    if (!response.ok) {
+      throw new Error(`API returned ${response.status}`);
+    }
+
+    const result = await response.json();
+
+    deals = (result.products || []).map(mapApiProduct);
+
+    render();
+  } catch (error) {
+    console.error('Failed to load PricePakad products:', error);
+
+    deals = [];
+
+    render();
+
+    toast('Could not load products. Check that the backend is running.');
   }
-
-];
-
-
+}
 
 let filter = 'all';
-
 let query = '';
-
 let onlyFav = false;
-
 let currency = 'INR';
-
 let favorites = new Set();
-
 let cart = [];
-
 let activeProduct = null;
-
 let historyDays = 7;
-
 let toastTimer;
-
-
 
 const $ = id => document.getElementById(id);
 
 const grid = $('productGrid');
 
-
-
 function money(n) {
-
   if (currency === 'USD') {
-
     return new Intl.NumberFormat('en-US', {
-
-      style:'currency',
-
-      currency:'USD',
-
-      maximumFractionDigits:2
-
+      style: 'currency',
+      currency: 'USD',
+      maximumFractionDigits: 2
     }).format(n / 83.5);
-
   }
 
-
-
   return '₹' + Math.round(n).toLocaleString('en-IN');
-
 }
 
-
-
 function toast(message) {
-
   const el = $('toast');
 
   el.textContent = message;
-
   el.classList.add('show');
-
-
 
   clearTimeout(toastTimer);
 
-
-
   toastTimer = setTimeout(() => {
-
     el.classList.remove('show');
-
   }, 2300);
-
 }
 
-
-
 function listDeals() {
-
   let list = deals.filter(d =>
-
     (
-
       filter === 'all' ||
-
       (filter === 'amazon' && d.market === 'amazon') ||
-
       (filter === 'flipkart' && d.market === 'flipkart') ||
-
       (filter === 'electronics' && d.category === 'electronics') ||
-
       (filter === 'home' && d.category === 'home') ||
-
       (filter === '30' && d.drop >= 30) ||
-
       (filter === 'low' && d.newlow)
-
     ) &&
-
     (!onlyFav || favorites.has(d.id)) &&
-
     (d.name + ' ' + d.category + ' ' + d.market)
-
       .toLowerCase()
-
       .includes(query.toLowerCase())
-
   );
-
-
 
   const sort = $('sort').value;
 
-
-
-  list.sort((a,b) =>
-
+  list.sort((a, b) =>
     sort === 'drop' ? b.drop - a.drop :
-
     sort === 'priceLow' ? a.price - b.price :
-
     sort === 'priceHigh' ? b.price - a.price :
-
-    b.score - a.score
-
+    (b.score ?? b.drop ?? 0) - (a.score ?? a.drop ?? 0)
   );
 
-
-
   return list;
-
 }
 
-
-
 function render() {
-
   const list = listDeals();
 
-
-
   grid.innerHTML = list.length
-
     ? list.map(d => `
-
       <article class="card">
-
         <div class="pic">
-
-          <span class="market">
-
-            ${d.market === 'amazon' ? 'AMAZON' : 'FLIPKART'}
-
-          </span>
-
-          <span class="drop">−${d.drop}%</span>
-
+          <span class="market">${d.market.toUpperCase()}</span>
+          <span class="drop">−${d.drop.toFixed(1)}%</span>
           ${d.emoji}
-
         </div>
-
-
 
         <div class="body">
-
           <div class="title-row">
-
             <div class="title">${d.name}</div>
 
-            <button class="heart ${favorites.has(d.id) ? 'fav' : ''}"
-
-              data-fav="${d.id}" aria-label="Toggle favorite">
-
+            <button
+              class="heart ${favorites.has(d.id) ? 'fav' : ''}"
+              data-fav="${d.id}"
+              aria-label="Toggle favorite">
               ${favorites.has(d.id) ? '♥' : '♡'}
-
             </button>
-
           </div>
 
-
-
-          <div class="muted">
-
-            ${d.category === 'electronics' ? 'Electronics' : 'Home & Kitchen'}
-
-            · Demo product
-
-          </div>
-
-
+          <div class="muted">${d.category} · PricePakad product</div>
 
           <div class="prices">
-
             <span class="now">${money(d.price)}</span>
-
             <span class="old">${money(d.old)}</span>
-
           </div>
-
-
 
           <div class="low">
-
-            Recorded sample low: ${money(d.low)}
-
-            ${d.newlow ? '· NEW LOW' : ''}
-
+            Lowest recorded price: ${money(d.low)}
+            ${d.newlow ? '· NEW LOW IN RECORDED HISTORY' : ''}
           </div>
-
-
 
           <div class="score">
-
-            <b>⚡ ${d.score}/100</b>
-
-            <span>Demo deal score</span>
-
+            <b>↓ ${d.drop.toFixed(1)}% off</b>
+            <span>Based on saved original price</span>
           </div>
-
-
 
           <div class="card-actions">
-
             <button data-history="${d.id}">Price History</button>
 
-            <a class="buy" href="${d.market === 'flipkart' ? 'https://www.flipkart.com/search?q=' + encodeURIComponent(d.name) : 'https://www.amazon.in/s?k=' + encodeURIComponent(d.name)}" target="_blank" rel="noopener noreferrer" aria-label="Search ${d.name} on ${d.market === 'flipkart' ? 'Flipkart' : 'Amazon'}">Find on ${d.market === 'flipkart' ? 'Flipkart' : 'Amazon'}</a>
-
+            <a
+              class="buy"
+              href="${d.productUrl}"
+              target="_blank"
+              rel="noopener noreferrer">
+              Visit ${d.market}
+            </a>
           </div>
-
         </div>
-
       </article>
-
     `).join('')
-
-    : '<div class="empty">No matching deals found. Change your search or filter.</div>';
-
-
+    : '<div class="empty">No products found. Add a product through the backend API, then refresh this page.</div>';
 
   $('favCount').textContent = favorites.size;
-
   $('cartCount').textContent = cart.length;
 
   $('favFilter').classList.toggle('active', onlyFav);
 
-
-
   document.querySelectorAll('[data-filter]').forEach(button => {
-
-    button.classList.toggle('active', button.dataset.filter === filter);
-
+    button.classList.toggle(
+      'active',
+      button.dataset.filter === filter
+    );
   });
 
-
-
   $('alertProduct').innerHTML = deals.map(d =>
-
     `<option value="${d.id}">${d.name}</option>`
-
   ).join('');
-
 }
 
-
-
 function openHistory(id, days = 7) {
-
-  activeProduct = deals.find(d => d.id === id);
+  activeProduct = deals.find(d => String(d.id) === String(id));
 
   historyDays = days;
 
-
-
   if (!activeProduct) return;
 
+  $('modalTitle').textContent =
+    activeProduct.name + ' — Price History';
 
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
 
-  $('modalTitle').textContent = activeProduct.name + ' — Price History';
+  const records = (activeProduct.history || []).filter(entry =>
+    !entry.date || entry.date.getTime() >= cutoff
+  );
 
-
+  const values = records.map(entry => entry.price);
 
   $('modalMeta').textContent =
+    `${activeProduct.market.toUpperCase()} · ${records.length} recorded price point(s) in the last ${days} days`;
 
-    (activeProduct.market === 'amazon' ? 'Amazon' : 'Flipkart') +
+  if (!records.length) {
+    $('chart').innerHTML =
+      '<p class="muted">No recorded price history is available for this period yet.</p>';
+  } else {
+    const max = Math.max(...values, 1);
 
-    ' · sample price points · ' + days + ' days';
+    $('chart').innerHTML = records.map((entry, index) => {
+      const label = entry.date && !Number.isNaN(entry.date.getTime())
+        ? entry.date.toLocaleDateString('en-IN', {
+            day: 'numeric',
+            month: 'short'
+          })
+        : `Record ${index + 1}`;
 
-
-
-  const count = days === 7 ? 7 : days === 30 ? 10 : 12;
-
-  const base = activeProduct.hist;
-
-  const values = [];
-
-
-
-  for (let i = 0; i < count; i++) {
-
-    const index = Math.round(i * (base.length - 1) / (count - 1));
-
-    let value = base[index];
-
-
-
-    if (days === 30 && i % 3 === 1) {
-
-      value = Math.round(value * 1.025);
-
-    }
-
-
-
-    if (days === 90 && i % 4 === 2) {
-
-      value = Math.round(value * 1.06);
-
-    }
-
-
-
-    values.push(value);
-
+      return `
+        <div
+          class="bar"
+          title="${money(entry.price)} · ${label}"
+          style="height:${Math.max(12, Math.round(entry.price / max * 145))}px">
+          <span>${label}</span>
+        </div>
+      `;
+    }).join('');
   }
 
-
-
-  values[values.length - 1] = activeProduct.price;
-
-
-
-  const max = Math.max(...values);
-
-
-
-  $('chart').innerHTML = values.map((value, index) => `
-
-    <div class="bar"
-
-      title="${money(value)}"
-
-      style="height:${Math.max(12, Math.round(value / max * 145))}px">
-
-      <span>
-
-        ${
-
-          index === values.length - 1
-
-            ? 'Now'
-
-            : days === 7
-
-              ? ['−6d','−5d','−4d','−3d','−2d','−1d',''][index]
-
-              : index + 1
-
-        }
-
-      </span>
-
-    </div>
-
-  `).join('');
-
-
+  const previous = records.length > 1
+    ? records[records.length - 2].price
+    : null;
 
   $('historySummary').innerHTML = `
-
     <div>
-
-      <small>Current demo price</small>
-
+      <small>Current saved price</small>
       <b>${money(activeProduct.price)}</b>
-
     </div>
 
     <div>
-
-      <small>Previous price</small>
-
-      <b>${money(activeProduct.old)}</b>
-
+      <small>Previous recorded price</small>
+      <b>${previous == null ? 'Not available' : money(previous)}</b>
     </div>
 
     <div>
-
-      <small>Recorded sample low</small>
-
+      <small>Lowest recorded price</small>
       <b>${money(activeProduct.low)}</b>
-
     </div>
-
   `;
 
-
-
   document.querySelectorAll('[data-days]').forEach(button => {
-
-    button.classList.toggle('active', +button.dataset.days === days);
-
+    button.classList.toggle(
+      'active',
+      +button.dataset.days === days
+    );
   });
 
-
-
   $('modal').classList.add('show');
-
 }
 
-
-
 function showCart() {
-
-  const total = cart.reduce((sum, product) => sum + product.price, 0);
-
-
+  const total = cart.reduce(
+    (sum, product) => sum + product.price,
+    0
+  );
 
   $('cartContents').innerHTML = cart.length
-
     ? cart.map((product, index) => `
-
       <div style="display:flex;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);padding:10px 0">
-
         <span>${product.emoji} ${product.name}</span>
-
         <b>${money(product.price)}</b>
-
         <button class="close" data-remove="${index}">Remove</button>
-
       </div>
-
     `).join('')
-
     : '<p class="muted">Your demo cart is empty.</p>';
-
-
 
   $('cartTotal').textContent = 'Total: ' + money(total);
 
   $('cartModal').classList.add('show');
-
 }
-
-
 
 /* Search */
 
 $('searchForm').addEventListener('submit', event => {
-
   event.preventDefault();
-
-
 
   query = $('searchInput').value.trim();
 
   onlyFav = false;
 
-
-
   render();
 
-  $('deals').scrollIntoView({behavior:'smooth'});
-
+  $('deals').scrollIntoView({ behavior: 'smooth' });
 });
 
-
-
 $('searchInput').addEventListener('input', () => {
-
   query = $('searchInput').value.trim();
 
   render();
-
 });
-
-
 
 /* Category and deal filters */
 
 $('filters').addEventListener('click', event => {
-
   const button = event.target.closest('[data-filter]');
 
   if (!button) return;
-
-
 
   filter = button.dataset.filter;
 
   onlyFav = false;
 
   render();
-
 });
 
-
-
 $('sort').addEventListener('change', render);
-
-
 
 /* Currency */
 
 $('currency').addEventListener('change', () => {
-
   currency = $('currency').value;
 
   $('settingsCurrency').value = currency;
 
   render();
-
 });
-
-
 
 /* Product card actions */
 
 grid.addEventListener('click', event => {
-
   const favoriteButton = event.target.closest('[data-fav]');
 
   const addButton = event.target.closest('[data-add]');
 
   const historyButton = event.target.closest('[data-history]');
 
-
-
   if (favoriteButton) {
-
-    const id = +favoriteButton.dataset.fav;
-
-
+    const id = favoriteButton.dataset.fav;
 
     if (favorites.has(id)) {
-
       favorites.delete(id);
-
     } else {
-
       favorites.add(id);
-
     }
-
-
 
     render();
 
-
-
     toast(
-
       favorites.has(id)
-
         ? 'Saved to Favorites ❤️'
-
         : 'Removed from Favorites'
-
     );
-
   }
 
-
-
   if (addButton) {
-
-    const product = deals.find(d => d.id === +addButton.dataset.add);
-
-
+    const product = deals.find(
+      d => String(d.id) === String(addButton.dataset.add)
+    );
 
     if (product) {
-
       cart.push(product);
 
       render();
 
       toast(product.name + ' added to demo cart');
-
     }
-
   }
-
-
 
   if (historyButton) {
-
-    openHistory(+historyButton.dataset.history);
-
+    openHistory(historyButton.dataset.history);
   }
-
 });
-
-
 
 /* Favorites */
 
 $('favFilter').addEventListener('click', () => {
-
   onlyFav = !onlyFav;
 
   render();
 
-  $('deals').scrollIntoView({behavior:'smooth'});
-
+  $('deals').scrollIntoView({ behavior: 'smooth' });
 });
-
-
 
 /* Cart actions */
 
 $('cartBtn').addEventListener('click', showCart);
 
-
-
 $('cartContents').addEventListener('click', event => {
-
   const button = event.target.closest('[data-remove]');
 
   if (!button) return;
-
-
 
   cart.splice(+button.dataset.remove, 1);
 
   showCart();
 
   render();
-
 });
-
-
 
 $('closeCart').addEventListener('click', () => {
-
   $('cartModal').classList.remove('show');
-
 });
 
-
-
 $('clearCart').addEventListener('click', () => {
-
   cart = [];
 
   showCart();
@@ -2984,146 +2546,86 @@ $('clearCart').addEventListener('click', () => {
   render();
 
   toast('Demo cart cleared');
-
 });
-
-
 
 /* Price history modal */
 
 $('closeModal').addEventListener('click', () => {
-
   $('modal').classList.remove('show');
-
 });
-
-
 
 $('modal').addEventListener('click', event => {
-
   if (event.target === $('modal')) {
-
     $('modal').classList.remove('show');
-
   }
-
 });
-
-
 
 $('cartModal').addEventListener('click', event => {
-
   if (event.target === $('cartModal')) {
-
     $('cartModal').classList.remove('show');
-
   }
-
 });
-
-
 
 document.querySelectorAll('[data-days]').forEach(button => {
-
   button.addEventListener('click', () => {
-
     if (activeProduct) {
-
       openHistory(activeProduct.id, +button.dataset.days);
-
     }
-
   });
-
 });
-
-
 
 /* Display settings */
 
 $('settingsBtn').addEventListener('click', () => {
-
   $('settingsPanel').classList.toggle('open');
 
-
-
   $('settingsPanel').scrollIntoView({
-
-    behavior:'smooth',
-
-    block:'nearest'
-
+    behavior: 'smooth',
+    block: 'nearest'
   });
-
 });
-
-
 
 $('closeSettings').addEventListener('click', () => {
-
   $('settingsPanel').classList.remove('open');
-
 });
-
-
 
 $('heroAlert').addEventListener('click', () => {
-
-  $('alerts').scrollIntoView({behavior:'smooth'});
-
+  $('alerts').scrollIntoView({ behavior: 'smooth' });
 });
-
-
 
 $('lightToggle').addEventListener('change', () => {
-
-  document.body.classList.toggle('light', $('lightToggle').checked);
-
+  document.body.classList.toggle(
+    'light',
+    $('lightToggle').checked
+  );
 });
-
-
 
 $('accentColor').addEventListener('input', () => {
-
   document.documentElement.style.setProperty(
-
     '--accent',
-
     $('accentColor').value
-
   );
-
 });
 
-
-
 $('settingsCurrency').addEventListener('change', () => {
-
   $('currency').value = $('settingsCurrency').value;
 
   currency = $('settingsCurrency').value;
 
   render();
-
 });
 
-
-
 $('resetSettings').addEventListener('click', () => {
-
   document.body.classList.remove('light');
 
   $('lightToggle').checked = false;
 
-
-
   $('accentColor').value = '#f06a13';
 
-
-
-  document.documentElement.style.setProperty('--accent', '#f06a13');
-
-
+  document.documentElement.style.setProperty(
+    '--accent',
+    '#f06a13'
+  );
 
   currency = 'INR';
 
@@ -3131,89 +2633,53 @@ $('resetSettings').addEventListener('click', () => {
 
   $('settingsCurrency').value = 'INR';
 
-
-
   render();
 
   toast('Settings reset');
-
 });
-
-
 
 /* Demo price alert form */
 
 $('alertForm').addEventListener('submit', event => {
-
   event.preventDefault();
 
-
-
   const product = deals.find(
-
-    d => d.id === +$('alertProduct').value
-
+    d => String(d.id) === String($('alertProduct').value)
   );
-
-
 
   const target = +$('alertTarget').value;
 
-
-
   if (!event.target.checkValidity() || target <= 0) {
-
     event.target.reportValidity();
-
     return;
-
   }
-
-
 
   if (!product) {
-
     toast('Please select a product');
-
     return;
-
   }
 
-
-
   $('formMsg').textContent =
-
     `✓ Demo alert prepared for ${product.name} at ${money(target)}. No email was sent.`;
-
-
 
   toast('Demo price alert set');
 
   event.target.reset();
-
 });
-
-
 
 /* Escape key closes open modals */
 
 document.addEventListener('keydown', event => {
-
   if (event.key === 'Escape') {
-
     $('modal').classList.remove('show');
 
     $('cartModal').classList.remove('show');
-
   }
-
 });
 
+/* Load products from the backend */
 
-
-/* Initial render */
-
-render();
+loadDeals();  
 
 </script>
 
